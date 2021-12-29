@@ -1,0 +1,36 @@
+UNIX DOMAIN SOCKETS -
+A structure sockaddr_in is used to store the addresses and port number of a server. 
+Also, it maintains a queue (fixed size-defined by user) of the incoming connection requests.
+1. Unix Domain Sockets is a method of connecting two nodes on a network to communicate with each other where
+  one socket(node) listens (SERVER) and other reaches out to form a connection (CLIENT).
+2. In server, first a socket is created(using sockfd()) of specified type (TCP in our case 
+  due to its high reliability), domain and protocol. Then it is binded (through bind()) to the
+  address and port number which is specified in struct sockaddr_in structure.
+3. Then it listens (through listen()) for an incoming signal from a client to make the connection.
+4. After a connection request arrives it extracts the first request on the queue of pending 
+  connections and thus the connection is established between the server and the client.
+5. The client also does similar things for the connection, but instead of listening for a 
+  signal it sends a signal(through connect()) to the server. After succesfully connecting to 
+  the server it can then send and receive signals from the server.
+
+
+FIFO (or NAMED PIPE) -
+1. A named pipe (FIFO) can last as long as the system is up in the form of a FIFO file 
+  even after its process is killed.
+2. A FIFO file is a special file created on the local storage which allows interprocess 
+  communication between multiple processes by reading/writing in this file.
+3. It is created using mkfifo() -which asks for pathname and permissions of the file. 
+  This has to be opened at both ends(sender and receiver) in order to communicate between processes.
+4. Then it is accessed like a normal file and written/read to/from it.
+
+
+MESSAGE PASSING QUEUE (USES LINKED LIST) -
+1. It uses a linked list (created/accessed using msgget()) which is kept in the kernel to 
+  store messages and the list identified by the message queue identifier.
+2. The sending process places a message onto a queue which can be read by another process 
+  which shares a common key (through ftok()) to gain access to the queue.
+3. Here, each message has a positive long integer type field, a non-negative length, and 
+  the actual data bytes it has.
+4. Messages while being sent is added to the end of the queue (through msgsnd()) which on 
+  the other end is fetched by their type field (through msgrcv()).
+5. No FIFO ordering is present while fetching the messages through a process.

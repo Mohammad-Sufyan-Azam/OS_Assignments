@@ -1,0 +1,50 @@
+diff --git ../B/linux-5.15.4/arch/x86/entry/syscalls/syscall_64.tbl linux-5.15.4/arch/x86/entry/syscalls/syscall_64.tbl
+index 18b5500..fe774b4 100644
+--- ../B/linux-5.15.4/arch/x86/entry/syscalls/syscall_64.tbl
++++ linux-5.15.4/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -370,7 +370,8 @@
+ 446	common	landlock_restrict_self	sys_landlock_restrict_self
+ 447	common	memfd_secret		sys_memfd_secret
+ 448	common	process_mrelease	sys_process_mrelease
+-
++449 common  hello_world     sys_hello_world
++450 common  kernel_2d_memcpy    sys_kernel_2D_memcpy
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+ # in x32 as compared to native x86_64.  These syscalls have numbers 512-547.
+@@ -414,4 +415,4 @@
+ 546	x32	preadv2			compat_sys_preadv64v2
+ 547	x32	pwritev2		compat_sys_pwritev64v2
+ # This is the end of the legacy x32 range.  Numbers 548 and above are
+-# not special and are not to be used for x32-specific syscalls.
++# not special and are not to be used for x32-specific syscalls.
+\ No newline at end of file
+diff --git ../B/linux-5.15.4/kernel/sys.c linux-5.15.4/kernel/sys.c
+index 8fdac0d..e0ffca1 100644
+--- ../B/linux-5.15.4/kernel/sys.c
++++ linux-5.15.4/kernel/sys.c
+@@ -200,6 +200,24 @@ out:
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE0(hello_world)
++{
++	printk("HELLO, FROM MY LOVELY SYSCALL!\n");
++	return 0;
++}
++
++SYSCALL_DEFINE4(kernel_2D_memcpy, float *, dest, float *, src, int, row, int, col)
++{
++	int size = row*col*4; 
++	float *buff = (float*)kmalloc(row*col*sizeof(float), GFP_KERNEL);
++	if (copy_from_user(buff, src, size) != 0)
++		return -1;
++	if (copy_to_user(dest, buff, size) != 0)
++		return -1;
++	kfree(buff);
++	return 0;
++}
++
+ SYSCALL_DEFINE3(setpriority, int, which, int, who, int, niceval)
+ {
+ 	struct task_struct *g, *p;
