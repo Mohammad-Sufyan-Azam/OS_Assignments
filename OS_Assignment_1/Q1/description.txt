@@ -1,0 +1,34 @@
+						Part 1 Program Structure
+Header File: header1.h
+C files: main1.c and file.c
+
+main.c has 1 function: int main();
+file.c also has 1 function: void file_read(char* section);
+
+main Funtion: makes a fork() sys call. If it fails the program exits.
+	    If succeeds then calls file_read function (in file.c) with
+	    parameters given as "A" or "B" a/c to it being a child or parent process respectively.
+	    After the child process prints average, exit() is called.
+
+For reading: file_read() opens .csv file by open("student_record.csv", O_RDONLY) sys call in read only mode.
+	    Then reads by read() with fd as obtained by open syscall and second parameter as a new buffer char array, 
+	    then delimits the strings by ',' using strtok(NULL, ",") function.
+For computation: The resulting array of characters (without ',') are stored into a 2D array of strings called 'memory'.
+            From 'memory' array I found the average of each assignment in the requred section and stored it into a double type array.
+For printing: Used sprintf() with format specifer: "%2.6f" to convert double type variables to array of characters 
+	    and stored the final result in a new char array. Then called write() with arguements as fd: 1, array, sizeof(array).
+	     
+						Part 2 Program Structure
+						
+Header File: header2.h
+C Files: main2.c and threads.c
+
+main.c has 1 function: int main();
+threads.c also has 1 function: void* file_read(void* section);
+
+main function: makes two threads using pthread_create and passes "A" and "B" respectively to it.
+	      If there is any problem with creation of a thread then prints error and exits.
+	      Calls the file_read function by pthread_create. Uses pthread_join for both threads.
+	      From the returned values, calculates and prints the average of each assignment.
+	      
+file_read: Same structure as before. Just used a global variable to store average values and return it to main().
