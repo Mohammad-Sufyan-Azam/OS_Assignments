@@ -1,0 +1,57 @@
+Semaphores were used to solve all the problems.
+Arrays were used to store these semaphore variables and threads.
+PROGRAM 1:
+1. It declares 5 threads and five semaphore binary variables for forks with initial value 1.
+2. All threads are numbered from 0-4 and call the function process_start() which starts the execution.
+3. All process from 1-4 take the left fork first, then the right fork while the 4th process 
+  takes the right fork first then the left fork.
+4. This is done so that at every point of time there is a semaphore variable with value 1 available. 
+  Hence, no deadlocks will occur.
+5. Then the philosophers (processes) eat and put the semaphore variable of the fork dropped to 1 again.
+6. This is the logic for the code.
+
+PROGRAM 2:
+1. There would be no deadlocks.
+2. Reason is -
+Case 1- Forks are picked first
+Pseudo Code:-
+    THINK
+    PICK_FORK(i % 5)
+    PICK_SAUCEBOWL(i % 4)
+    EAT
+    DROP_SAUCEBOWL(i % 4)
+    DROP_FORK(i % 5)
+
+Even in the worst case, (i.e., every fork is picked and every saucepan is taken
+and none of them has eaten due to pre-emption), 4 processes can enter the critical section code and eat
+finally freeing the forks and saucepans for the fifth process to eat (He was waiting for the saucebowl).
+
+Case 2- Sauce bowls are picked first
+Psudo Code:-
+    THINK
+    PICK_SAUCEBOWL(i % 4)
+    PICK_FORK(i % 5)
+    EAT
+    DROP_FORK(i % 5)
+    DROP_SAUCEBOWL(i % 4)
+
+Even in the worst case, (i.e., every fork is picked and every saucepan is taken
+and none of them has eaten due to pre-emption), 4 processes can enter the critical section code and eat
+finally freeing the forks and saucepans for the fifth process to eat (He was waiting for the saucebowl).
+
+Hence, no matter in which order we make the philosophers take the saucapans or forks,
+deadlocks can never occur as there will always be room for process to eat and finish.
+
+
+PROGRAM 3:
+1. It declares 5 threads, 5 semaphore binary variables for forks with initial value 1, and 2 semaphore
+  counting variables named count and bowls with initial value as 4 each.
+2. All threads are numbered from 0-4 and call the function process_start() which starts the execution.
+3. At max 4 processes are allowed in it with the help of count semaphore. All process take the left 
+  fork first then the right fork.
+4. This is done so that at every point of time there is a semaphore variable available as max 4 processes
+  are allowed to execute. Hence, no deadlocks will occur.
+5. Then the philosophers (processes) eat and put the semaphore variable of the fork dropped to 1 again
+  and decrement the value of count, and bowls by 1 to release them.
+6. This is the logic for the code.
+
